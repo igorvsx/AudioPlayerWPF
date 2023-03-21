@@ -21,17 +21,19 @@ namespace AudioPlayer
 {
     public partial class MainWindow : Window
     {
-        //private ObservableCollection<string> songs = new ObservableCollection<string>();
-        //private List<string> songsList = new List<string>();
         public MainWindow()
         {
             InitializeComponent();
             InitializeTimer();
+            btnPlay.IsEnabled = false;
+            btnNext.IsEnabled = false;
+            btnBack.IsEnabled = false;
+            btnRepeat.IsEnabled = false;
+            btnRandom.IsEnabled = false;
         }
         private DispatcherTimer timer;
         private string path;
         private bool isPlaying = false;
-        private TimeSpan currentPosition;
         private bool isRepeat = false;
         private bool isRandom = false;
         private void InitializeTimer()
@@ -40,12 +42,10 @@ namespace AudioPlayer
             timer.Interval = TimeSpan.FromSeconds(0.1);
             timer.Tick += Timer_Tick;
         }
-
         private void Timer_Tick(object sender, EventArgs e)
         {
             AudioSlider.Value = MediaEl.Position.TotalSeconds;
             MediaEl.Position = TimeSpan.FromSeconds(AudioSlider.Value);
-
         }
         private void OpenFolderButton_Click(object sender, RoutedEventArgs e)
         {
@@ -54,6 +54,11 @@ namespace AudioPlayer
 
             if (result == CommonFileDialogResult.Ok)
             {
+                btnPlay.IsEnabled = true;
+                btnNext.IsEnabled = true;
+                btnBack.IsEnabled = true;
+                btnRepeat.IsEnabled = true;
+                btnRandom.IsEnabled = true;
                 SongList.Items.Clear();
                 path = Path.GetFullPath(dialog.FileName);
                 string[] files = Directory.GetFiles(dialog.FileName);
@@ -68,7 +73,6 @@ namespace AudioPlayer
                 }
                 MediaEl.Source = new Uri(files.First());
                 isPlaying = true;
-                btnPlay.Content = "Пауза";
                 SongList.SelectedIndex = 0;
                 UpdateTime();
                 MediaEl.Play();
@@ -99,16 +103,22 @@ namespace AudioPlayer
                 if (isPlaying)
                 {
                     MediaEl.Pause();
+                    timer.Stop();
                     isPlaying = false;
-                    btnPlay.Content = "Играть";
                 }
                 else
                 {
                     MediaEl.Play();
+                    timer.Start();
                     isPlaying = true;
-                    btnPlay.Content = "Пауза";
                 }
             }
+        }
+        private void RandomTrack()
+        {
+            Random rand = new Random();
+            int track = rand.Next(SongList.Items.Count);
+            SongList.SelectedIndex = track;
         }
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
@@ -151,6 +161,7 @@ namespace AudioPlayer
                 string trackName = SongList.SelectedItem.ToString();
                 string trackPath = path + "\\" + trackName;
                 MediaEl.Source = new Uri(trackPath);
+                isPlaying = true;
                 MediaEl.Play();
                 timer.Start();
             }
@@ -166,7 +177,7 @@ namespace AudioPlayer
                         Thread.Sleep(1000);
                         this.Dispatcher.Invoke(() =>
                         {
-                            TotalTime.Text = (MediaEl.NaturalDuration.TimeSpan.Subtract(TimeSpan.FromSeconds(AudioSlider.Value)).ToString(@"mm\:ss"));
+                            TotalTime.Text = String.Format("{0:mm\\:ss}", MediaEl.NaturalDuration.TimeSpan.Subtract(TimeSpan.FromSeconds(AudioSlider.Value)));
                             CurrentTime.Text = String.Format("{0:D2}:{1:D2}", MediaEl.Position.Minutes, MediaEl.Position.Seconds);
                         });
                     }
@@ -182,9 +193,23 @@ namespace AudioPlayer
 
         private void MediaEl_MediaEnded(object sender, RoutedEventArgs e)
         {
-            AudioSlider.Value = 0;
-            timer.Stop();
-            SongList.SelectedIndex++;
+            if (isRepeat)
+            {
+                MediaEl.Position = TimeSpan.Zero;
+                MediaEl.Play();
+            }
+            else if (isRandom)
+            {
+                RandomTrack();
+            }
+            else
+            {
+                AudioSlider.Value = 0;
+                timer.Stop();
+                SongList.SelectedIndex++;
+            }
+            TotalTime.Text = "00:00";
+            CurrentTime.Text = "00:00";
         }
         private void btnRepeat_Click(object sender, RoutedEventArgs e)
         {

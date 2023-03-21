@@ -1,6 +1,7 @@
 ﻿<Window x:Class="AudioPlayer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
@@ -22,12 +23,27 @@
         <Button x:Name="OpenFolderButton" Content="Открыть папку" HorizontalAlignment="Center" VerticalAlignment="Center" Click="OpenFolderButton_Click" Grid.Column="2" Height="32" Width="130"/>
         <MediaElement x:Name="MediaEl" LoadedBehavior="Manual" MediaOpened="MediaEl_MediaOpened" MediaEnded="MediaEl_MediaEnded" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Height="0" Width="0"/>
         <Slider x:Name="AudioSlider" ValueChanged="AudioSlider_ValueChanged" VerticalAlignment="Center" MinWidth="60" Height="27" Grid.Row="2" Grid.ColumnSpan="3" Margin="10,0,10,0" Grid.Column="1"/>
-        <Button x:Name="btnBack" Content="Назад" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnBack_Click" Grid.Row="3" Width="120"/>
-        <Button x:Name="btnPlay" Content="Играть" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnPlay_Click" Grid.Column="1" Grid.Row="3" Width="120"/>
-        <Button x:Name="btnNext" Content="Вперед" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnNext_Click" Grid.Row="3" Grid.Column="2" Width="120"/>
+        <Button x:Name="btnBack" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnBack_Click" Grid.Row="3">
+            <materialDesign:PackIcon 
+                Kind="ArrowLeft" />
+        </Button>
+        <Button x:Name="btnPlay" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnPlay_Click" Grid.Column="1" Grid.Row="3">
+            <materialDesign:PackIcon 
+                Kind="Play" />
+        </Button>
+        <Button x:Name="btnNext" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnNext_Click" Grid.Row="3" Grid.Column="2">
+            <materialDesign:PackIcon 
+            Kind="ArrowRight"/>
+        </Button>
         <ListBox x:Name="SongList" Margin="10" SelectionChanged="SongList_SelectionChanged" Grid.Row="1" Grid.ColumnSpan="5"/>
-        <Button x:Name="btnRepeat" Grid.Column="3" Content="Повторять" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="32" Width="Auto" Click="btnRepeat_Click"/>
-        <Button x:Name="btnRandom" Grid.Column="4" Content="Случайно" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Width="120" Click="btnRandom_Click"/>
+        <Button x:Name="btnRepeat" Grid.Column="3" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Height="32" Click="btnRepeat_Click">
+            <materialDesign:PackIcon 
+                Kind="Repeat" />
+        </Button>
+        <Button x:Name="btnRandom" Grid.Column="4" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Center" Click="btnRandom_Click">
+            <materialDesign:PackIcon 
+                Kind="Shuffle" />
+        </Button>
         <TextBlock x:Name="TotalTime" Grid.Column="4" HorizontalAlignment="Center" Margin="10" Grid.Row="2" Text="" VerticalAlignment="Center"/>
         <TextBlock x:Name="CurrentTime" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0" Text="" Margin="10" VerticalAlignment="Center"/>
     </Grid>
